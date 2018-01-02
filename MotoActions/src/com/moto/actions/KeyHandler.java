@@ -68,7 +68,7 @@ import com.android.internal.util.liquid.Action;
 import com.moto.actions.util.FileUtils;
 
 import java.util.List;
-
+import android.widget.Toast;
 import static com.moto.actions.actions.Constants.*;
 
 public class KeyHandler implements DeviceKeyHandler {
@@ -453,7 +453,9 @@ public class KeyHandler implements DeviceKeyHandler {
         }
 
         boolean isFPScanCode = ArrayUtils.contains(sSupportedFPGestures, scanCode);
-        if (!isFPScanCode) {
+        boolean isScreenOffGesturesScanCode = ArrayUtils.contains(sSupportedScreenOffGestures, scanCode);
+        if (!isFPScanCode && !isScreenOffGesturesScanCode) {
+
             return false;
         }
 
@@ -494,6 +496,46 @@ public class KeyHandler implements DeviceKeyHandler {
         }
         return true;
     }
+
+
+
+    public boolean canHandleKeyEvent(KeyEvent event) {
+        int scanCode = event.getScanCode();
+
+        if (DEBUG) {
+            Log.d(TAG, "DEBUG: action=" + event.getAction()
+                    + ", flags=" + event.getFlags()
+                    + ", keyCode=" + event.getKeyCode()
+                    + ", scanCode=" + event.getScanCode()
+                    + ", metaState=" + event.getMetaState()
+                    + ", repeatCount=" + event.getRepeatCount());
+        }
+
+        boolean isFPScanCode = ArrayUtils.contains(sSupportedFPGestures, scanCode);
+        boolean isScreenOffGesturesScanCode = ArrayUtils.contains(sSupportedScreenOffGestures, scanCode);
+        if (!isFPScanCode && !isScreenOffGesturesScanCode) {
+            return false;
+        }
+
+        return true;
+    }
+
+    public boolean isCameraLaunchEvent(KeyEvent event) {
+        return false;
+    }
+
+    public boolean isWakeEvent(KeyEvent event){
+        return false;
+    }
+
+    public boolean isDisabledKeyEvent(KeyEvent event) {
+        return false;
+    }
+
+    public Intent isActivityLaunchEvent(KeyEvent event) {
+        return null;
+    }
+
 
     private void processFPScancode(int scanCode) {
         int action = 0;
@@ -701,6 +743,86 @@ public class KeyHandler implements DeviceKeyHandler {
     private void resetFPGestureDelay() {
         fpGesturePending = false;
         mHandler.removeCallbacks(fpGestureRunnable);
+    }
+
+    private void handleScreenOffScancode(int scanCode) {
+        if (screenOffGesturePending) {
+            return;
+        } else {
+            resetScreenOffGestureDelay();
+            screenOffGesturePending = true;
+            mHandler.postDelayed(screenOffGestureRunnable, 500);
+        }
+        if (isProximityEnabledOnScreenOffGestures() && !mScreenOffGesturesHandler.hasMessages(GESTURE_REQUEST)) {
+            Message msg = mScreenOffGesturesHandler.obtainMessage(GESTURE_REQUEST);
+            msg.arg1 = scanCode;
+            boolean defaultProximity = mContext.getResources().getBoolean(
+                  com.android.internal.R.bool.config_proximityCheckOnWakeEnabledByDefault);
+            boolean proximityWakeCheckEnabled = Settings.System.getInt(mContext.getContentResolver(),
+                    Settings.System.PROXIMITY_ON_WAKE, defaultProximity ? 1 : 0) == 1;
+            if (mProximityWakeSupported && proximityWakeCheckEnabled && mProximitySensor != null) {
+                mScreenOffGesturesHandler.sendMessageDelayed(msg, mProximityTimeOut);
+                registerScreenOffGesturesListener(scanCode);
+            } else {
+                mScreenOffGesturesHandler.sendMessage(msg);
+            }
+        }else{
+            processScreenOffScancode(scanCode);
+        }
+    }
+
+    private void processScreenOffScancode(int scanCode) {
+        int action = 0;
+        switch (scanCode) {
+            case GESTURE_SWIPE_RIGHT_SCANCODE:
+                action = str2int(FileUtils.readOneLine(GESTURE_SWIPE_RIGHT_NODE));
+                break;
+            case GESTURE_SWIPE_LEFT_SCANCODE:
+                action = str2int(FileUtils.readOneLine(GESTURE_SWIPE_LEFT_NODE));
+                break;
+            case GESTURE_SWIPE_DOWN_SCANCODE:
+                action = str2int(FileUtils.readOneLine(GESTURE_SWIPE_DOWN_NODE));
+                break;
+            case GESTURE_SWIPE_UP_SCANCODE:
+                action = str2int(FileUtils.readOneLine(GESTURE_SWIPE_UP_NODE));
+                break;
+            case GESTURE_DOUBLE_TAP_SCANCODE:
+                action = str2int(FileUtils.readOneLine(GESTURE_DOUBLE_TAP_NODE));
+                if (action != 0) {
+                    action = ACTION_POWER;
+                }
+                break;
+        }
+        boolean isActionSupported = ArrayUtils.contains(sScreenOffSupportedActions, action);
+        if (isActionSupported) {
+            fireScreenOffAction(action);
+        }
+    }
+
+    private void registerScreenOffGesturesListener(final int scanCode) {
+        mProximityWakeLock.acquire();
+        mSensorManager.registerListener(new SensorEventListener() {
+            @Override
+            public void onSensorChanged(SensorEvent event) {
+                mProximityWakeLock.release();
+                mSensorManager.unregisterListener(this);
+                if (!mScreenOffGesturesHandler.hasMessages(GESTURE_REQUEST)) {
+                    // The sensor took to long, ignoring.
+                    return;
+                }
+                mScreenOffGesturesHandler.removeMessages(GESTURE_REQUEST);
+                if (event.values[0] == mProximitySensor.getMaximumRange()) {
+                    Message msg = mScreenOffGesturesHandler.obtainMessage(GESTURE_REQUEST);
+                    msg.arg1 = scanCode;
+                    mScreenOffGesturesHandler.sendMessage(msg);
+                }
+            }
+
+            @Override
+            public void onAccuracyChanged(Sensor sensor, int accuracy) {
+            }
+
+        }, mProximitySensor, SensorManager.SENSOR_DELAY_FASTEST);
     }
 
     private void fireScreenOffAction(int action) {

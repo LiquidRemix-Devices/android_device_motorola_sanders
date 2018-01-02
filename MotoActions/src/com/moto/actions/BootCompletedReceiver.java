@@ -49,6 +49,22 @@ public class BootCompletedReceiver extends BroadcastReceiver {
         context.startService(new Intent(context, ServiceWrapper.class));
     }
 
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+
+        if (!preferences.getBoolean(NAVBAR_SHOWN, false)) {
+            //enableNavBar(true, context);
+            preferences.edit().putBoolean(NAVBAR_SHOWN, true).commit(); 
+        }
+
+        context.startService(new Intent(context, ServiceWrapper.class));
+    }
+
+/*    protected static void enableNavBar(boolean enable, Context context) {
+        LineageSettings.Global.putInt(context.getContentResolver(),
+                LineageSettings.Global.DEV_FORCE_SHOW_NAVBAR, enable ? 1 : 0);
+    }
+*/
+
     private ServiceConnection serviceConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName className, IBinder service) {
