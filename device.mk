@@ -102,12 +102,12 @@ PRODUCT_PACKAGES += \
 # Camera
 PRODUCT_PACKAGES += \
     libbson \
-    libshim_camera \
-    GoogleCamera \
     camera.device@1.0-impl \
     camera.device@3.2-impl \
     android.hardware.camera.provider@2.4-impl \
     libshim_camera_hal \
+    libshims_camera \
+    GoogleCamera
 
 PRODUCT_COPY_FILES += \
     $(LOCAL_PATH)/configs/camera/imx219_chromatix.xml:system/etc/camera/imx219_chromatix.xml \
