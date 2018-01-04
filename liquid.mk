@@ -19,6 +19,9 @@
 $(call inherit-product, device/motorola/sanders/full_sanders.mk)
 
 # Inherit some common CM stuff.
+
+# Inherit some common Liquid stuff.
+
 $(call inherit-product, vendor/liquid/config/common_full_phone.mk)
 
 # Boot animation
@@ -26,10 +29,15 @@ TARGET_SCREEN_WIDTH := 1080
 TARGET_SCREEN_HEIGHT := 1920
 
 ## Device identifier. This must come after all inclusions
+
 PRODUCT_DEVICE := sanders
+
 PRODUCT_NAME := liquid_sanders
+
 PRODUCT_BRAND := motorola
+
 PRODUCT_MANUFACTURER := motorola
+
 PRODUCT_MODEL := Moto G5s Plus
 
 PRODUCT_BUILD_PROP_OVERRIDES += TARGET_DEVICE=liquid_sander PRODUCT_NAME="Moto G5s Plus"
