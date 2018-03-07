@@ -27,6 +27,7 @@ import android.content.ServiceConnection;
 import android.os.IBinder;
 import android.util.Log;
 
+
 import com.moto.actions.util.FileUtils;
 import com.moto.actions.actions.Constants;
 import com.moto.actions.ServiceWrapper.LocalBinder;
@@ -45,22 +46,8 @@ public class BootCompletedReceiver extends BroadcastReceiver {
         for (String pref : Constants.sPrefKeys) {
              Constants.writePreference(context, pref);
         }
-
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-
-        if (!preferences.getBoolean(NAVBAR_SHOWN, false)) {
-            //enableNavBar(true, context);
-            preferences.edit().putBoolean(NAVBAR_SHOWN, true).commit(); 
-        }
-
         context.startService(new Intent(context, ServiceWrapper.class));
     }
-
-/*    protected static void enableNavBar(boolean enable, Context context) {
-        LineageSettings.Global.putInt(context.getContentResolver(),
-                LineageSettings.Global.DEV_FORCE_SHOW_NAVBAR, enable ? 1 : 0);
-    }
-*/
 
     private ServiceConnection serviceConnection = new ServiceConnection() {
         @Override
