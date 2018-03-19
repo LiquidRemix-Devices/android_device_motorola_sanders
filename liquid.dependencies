@@ -18,5 +18,10 @@
     "repository": "LineageOS/android_packages_resources_devicesettings",
     "target_path": "packages/resources/devicesettings",
     "branch": "lineage-15.0"
+  },
+  {
+    "repository":  "LineageOS/android_device_lineage_sepolicy",
+    "target_path": "device/lineage/sepolicy",
+    "branch":  "lineage-15.1"
   }
 ]
