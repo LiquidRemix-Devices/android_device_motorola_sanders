@@ -68,7 +68,8 @@ PRODUCT_PACKAGES += \
     libaudio-resampler \
     libshim_adsp \
     libtinycompress \
-    audiod
+    audiod \
+    Phonograph 
 
 PRODUCT_PACKAGES += \
     libqcomvisualizer \
