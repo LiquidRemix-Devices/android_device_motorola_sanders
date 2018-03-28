@@ -69,7 +69,7 @@ PRODUCT_PACKAGES += \
     libshim_adsp \
     libtinycompress \
     audiod \
-    Phonograph 
+    RetroMusicPlayer 
 
 PRODUCT_PACKAGES += \
     libqcomvisualizer \
