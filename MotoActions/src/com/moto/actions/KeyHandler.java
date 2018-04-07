@@ -453,7 +453,6 @@ public class KeyHandler implements DeviceKeyHandler {
         boolean isFPScanCode = ArrayUtils.contains(sSupportedFPGestures, scanCode);
         boolean isScreenOffGesturesScanCode = ArrayUtils.contains(sSupportedScreenOffGestures, scanCode);
         if (!isFPScanCode && !isScreenOffGesturesScanCode) {
-
             return false;
         }
 
@@ -755,7 +754,7 @@ public class KeyHandler implements DeviceKeyHandler {
             Message msg = mScreenOffGesturesHandler.obtainMessage(GESTURE_REQUEST);
             msg.arg1 = scanCode;
             boolean defaultProximity = mContext.getResources().getBoolean(
-                  com.android.internal.R.bool.config_proximityCheckOnWakeEnabledByDefault);
+                    com.android.internal.R.bool.config_proximityCheckOnWakeEnabledByDefault);
             boolean proximityWakeCheckEnabled = Settings.System.getInt(mContext.getContentResolver(),
                     Settings.System.PROXIMITY_ON_WAKE, defaultProximity ? 1 : 0) == 1;
             if (mProximityWakeSupported && proximityWakeCheckEnabled && mProximitySensor != null) {
