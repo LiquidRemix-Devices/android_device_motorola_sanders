@@ -57,7 +57,7 @@ public class GlanceSensor implements ScreenStateNotifier {
     public void screenTurnedOff() {
         if (mMotoActionsSettings.isPickUpEnabled() && !mEnabled) {
             Log.d(TAG, "Enabling");
-            mSensorHelper.registerListener(mSensor, mGlanceListen
+            mSensorHelper.registerListener(mSensor, mGlanceListen);
             mEnabled = true;
         }
    }
