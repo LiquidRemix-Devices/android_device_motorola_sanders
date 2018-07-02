@@ -39,15 +39,12 @@ TARGET_ARCH_VARIANT := armv8-a
 TARGET_CPU_ABI := arm64-v8a
 TARGET_CPU_ABI2 :=
 TARGET_CPU_VARIANT := cortex-a53
-
+TARGET_CPU_CORTEX_A53 := true
 TARGET_2ND_ARCH := arm
 TARGET_2ND_ARCH_VARIANT := armv7-a-neon
 TARGET_2ND_CPU_ABI := armeabi-v7a
 TARGET_2ND_CPU_ABI2 := armeabi
 TARGET_2ND_CPU_VARIANT := cortex-a53
-TARGET_CPU_CORTEX_A53 := true
-
-# Binder API version
 TARGET_USES_64_BIT_BINDER := true
 
 DISABLE_DTC_OPTS := true
@@ -132,9 +129,6 @@ WITH_CM_CHARGER := false
 # DT2W
 TARGET_TAP_TO_WAKE_NODE := "/sys/android_touch/doubletap2wake"
 
-# CNE / DPM
-BOARD_USES_QCNE := true
-
 # Crypto
 TARGET_HW_DISK_ENCRYPTION := true
 TARGET_CRYPTFS_HW_PATH ?=vendor/qcom/opensource/cryptfs_hw
@@ -175,8 +169,7 @@ TARGET_PROVIDES_LIBLIGHT := true
 DEVICE_MANIFEST_FILE := $(DEVICE_PATH)/configs/manifest.xml
 DEVICE_MATRIX_FILE   := $(DEVICE_PATH)/configs/compatibility_matrix.xml
 
-PRODUCT_BOOT_JARS += telephony-ext
-
+# NFC
 NXP_CHIP_TYPE := PN551
 BOARD_NFC_HAL_SUFFIX := $(TARGET_BOARD_PLATFORM)
 
@@ -191,6 +184,9 @@ BOARD_USERDATAIMAGE_PARTITION_SIZE := 25614597120 # 25014255 * 1024 mmcblk0p54
 
 # Peripheral manager
 TARGET_PER_MGR_ENABLED := true
+
+# Power
+TARGET_HAS_NO_WIFI_STATS := true
 
 # QC flags
 BOARD_USES_QCOM_HARDWARE := true
@@ -210,17 +206,13 @@ TARGET_RELEASETOOLS_EXTENSIONS := $(DEVICE_PATH)/releasetools
 #include device/qcom/sepolicy/sepolicy.mk
 #BOARD_SEPOLICY_DIRS += $(DEVICE_PATH)/sepolicy
 
-# Sensor
-USE_SENSOR_MULTI_HAL := true
-
 # Shim
 TARGET_LD_SHIM_LIBS := \
     /system/vendor/bin/adspd|libshim_adsp.so \
-    /system/lib/lib_motsensorlistener.so|libsensor.so \
-    /system/vendor/lib/libmot_gpu_mapper.so|libshim_camera.so \
-	/system/lib/libjustshoot.so|libshims_camera.so \
-	/system/vendor/lib/libguy.so|libshim_camera_hal.so \
-	/system/vendor/lib64/libmdmcutback.so|libqsap_shim.so
+    /system/vendor/lib64/libmdmcutback.so|libqsap_shim.so
+
+# Thermal
+USE_DEVICE_SPECIFIC_THERMAL := true
 
 # Wifi
 BOARD_HAS_QCOM_WLAN              := true
