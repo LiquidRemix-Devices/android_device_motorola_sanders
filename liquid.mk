@@ -18,8 +18,6 @@
 # Inherit from those products. Most specific first.
 $(call inherit-product, device/motorola/sanders/full_sanders.mk)
 
-# Inherit some common CM stuff.
-
 # Inherit some common Liquid stuff.
 
 $(call inherit-product, vendor/liquid/config/common_full_phone.mk)
@@ -43,4 +41,5 @@ PRODUCT_MODEL := Moto G5s Plus
 PRODUCT_BUILD_PROP_OVERRIDES += TARGET_DEVICE=liquid_sander PRODUCT_NAME="Moto G5s Plus"
 
 PRODUCT_BUILD_PROP_OVERRIDES += \
-	DEVICE_MAINTAINERS="Syed Sajid(syedsajid)"
+	DEVICE_MAINTAINERS="Syed Sajid (syedsajid)"
+export LIQUID_BUILDTYPE=RELEASE
